@@ -5,6 +5,13 @@
 
 class NeuralNetwork
 {
+private:
+	int* shape;
+	int layerCount;
+
+	ActivationFunction* activationFunction;
+	Matrix* neurons;
+	Matrix* weights;
 public:
 	NeuralNetwork(int shape[], int layerCount, ActivationFunction* activationFunction);
 	~NeuralNetwork();
@@ -34,12 +41,8 @@ public:
 
 	void randomizeWeights(double, double);
 
+	void initializeNeurons(int minibatchSize);
 	Matrix* compute(const Matrix& input);
-private:
-	int* shape;
-	int layerCount;
 
-	ActivationFunction* activationFunction;
-	Matrix* weights;
 };
 

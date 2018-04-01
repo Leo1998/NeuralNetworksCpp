@@ -39,23 +39,35 @@ static void copyMatrixAndAddBias(const Matrix& src, const Matrix& dest)
 	}
 }
 
-Matrix* NeuralNetwork::compute(const Matrix& input) {
-	Matrix* m = new Matrix(input.getRows(), input.getCols() + 1);
-	copyMatrixAndAddBias(input, *m);
-
-	for (int l = 0; l < layerCount - 1; l++) {
-		Matrix temp = *m * weights[l];
-
-		bool needBias = l != layerCount - 2;
-		*m = Matrix(temp.getRows(), needBias ? temp.getCols() + 1 : temp.getCols());
-		copyMatrixAndAddBias(temp, *m);
-
-		for (int i = 0; i < m->getRows(); i++) {
-			for (int j = 0; j < m->getCols(); j++) {
-				m->operator()(i, j) = activationFunction->getOutput(m->operator()(i, j));
-			}
+void NeuralNetwork::initializeNeurons(int minibatchSize)
+{
+	if (neurons == nullptr || (neurons != nullptr && neurons[0].getRows() != minibatchSize)) {
+		delete[] neurons;
+		
+		this->neurons = new Matrix[layerCount];
+		for (int l = 0; l < layerCount; l++) {
+			neurons[l] = Matrix(minibatchSize, l == layerCount - 1 ? getNeuronCount(l) : getNeuronCount(l) + 1);
 		}
 	}
+}
 
-	return m;
+Matrix* NeuralNetwork::compute(const Matrix& input) {
+	initializeNeurons(input.getRows());
+
+	copyMatrixAndAddBias(input, neurons[0]);
+
+	for (int l = 0; l < layerCount - 1; l++) {
+		Matrix* in = &(neurons[l]);
+		Matrix m = *in * weights[l];
+
+		for (int i = 0; i < m.getRows(); i++) {
+			for (int j = 0; j < m.getCols(); j++) {
+				m(i, j) = activationFunction->getOutput(m(i, j));
+			}
+		}
+
+		copyMatrixAndAddBias(m, neurons[l + 1]);
+	}
+
+	return &(neurons[getLayerCount() - 1]);
 }

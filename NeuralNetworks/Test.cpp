@@ -1,6 +1,7 @@
 #include "NeuralNetwork.h"
 #include "ActivationFunctions.h"
 
+#include "Timer.h"
 #include <iostream>
 
 int main() {
@@ -16,8 +17,10 @@ int main() {
 	m(1, 0) = 0.0;
 	m(1, 1) = 1.0;
 
+	Timer timer;
 	Matrix* result = nn.compute(m);
 
+	std::cout << "Computation took: " << timer.elapsedMillis() << " ms" << std::endl;
 	std::cout << *result << std::endl;
 
 	std::cin.get();
