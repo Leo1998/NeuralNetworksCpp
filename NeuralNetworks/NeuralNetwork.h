@@ -1,15 +1,45 @@
 #pragma once
 
-#include <vector>
+#include "Matrix.h"
+#include "ActivationFunctions.h"
 
-#include "Layer.h"
-
-class NeuralNetwork {
-private:
-	std::vector<Layer> layers;
+class NeuralNetwork
+{
 public:
-	NeuralNetwork(std::vector<int> pattern);
+	NeuralNetwork(int shape[], int layerCount, ActivationFunction* activationFunction);
 	~NeuralNetwork();
 
-	void logSchema();
+	inline int getLayerCount() { return layerCount; }
+	inline int getNeuronCount(int layer) { return shape[layer]; }
+
+	/**
+		Returns the Bias from the l-th Layer to the n-th Neuron in the next Layer.
+	*/
+	inline double getBias(int l, int n) { return weights[l](getNeuronCount(l), n); }
+	/**
+		Sets the Bias from the l-th Layer to the n-th Neuron in the next Layer to the given Value.
+	*/
+	inline void setBias(int l, int n, double bias) { weights[l](getNeuronCount(l), n) = bias; }
+
+	/**
+		Returns the Weight of the Connection from the n1-th Neuron in the l-th Layer to the	n2-th Neuron in the next Layer.
+	*/
+	inline double getWeight(int l, int n1, int n2) { return weights[l](n1, n2); }
+	/**
+		Sets the Weight of the Connection from the n1-th Neuron in the l-th Layer to the n2-th Neuron in the next Layer to the given Value.
+	*/
+	inline void setWeight(int l, int n1, int n2, double value) { weights[l](n1, n2) = value; }
+
+	inline const Matrix& getWeightMatrix(int l) { return weights[l]; }
+
+	void randomizeWeights(double, double);
+
+	Matrix* compute(const Matrix& input);
+private:
+	int* shape;
+	int layerCount;
+
+	ActivationFunction* activationFunction;
+	Matrix* weights;
 };
+

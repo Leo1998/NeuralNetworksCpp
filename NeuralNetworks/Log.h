@@ -13,7 +13,7 @@ static char to_string_buffer[1024 * 10];
 template <typename T>
 static const char* to_string(const T& t)
 {
-	sprintf_s(to_string_buffer, "Container: %d", t);
+	sprintf_s(to_string_buffer, "%d", t);
 	return to_string_buffer;
 }
 

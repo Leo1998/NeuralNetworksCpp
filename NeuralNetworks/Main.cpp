@@ -1,12 +1,26 @@
-#include "Log.h"
 #include "NeuralNetwork.h"
+#include "ActivationFunctions.h"
+
+#include <iostream>
 
 int main() {
-	NeuralNetwork n({2, 3, 2});
+	int shape[] = { 2, 2, 1 };
 
-	n.logSchema();
+	NeuralNetwork nn(shape, sizeof(shape) / sizeof(*shape), new Sigmoid);
+	nn.randomizeWeights(0.0, 1.0);
 
-	waitHere();
+	Matrix m(2, 2);
+	m(0, 0) = 1.0;
+	m(0, 1) = 0.0;
 
+	m(1, 0) = 0.0;
+	m(1, 1) = 1.0;
+
+	Matrix* result = nn.compute(m);
+
+	std::cout << *result << std::endl;
+
+	std::cin.get();
+	
 	return 0;
 }
