@@ -39,22 +39,28 @@ static void copyMatrixAndAddBias(const Matrix& src, const Matrix& dest)
 	}
 }
 
-void NeuralNetwork::initializeNeurons(int minibatchSize)
+void NeuralNetwork::initializeMinibatchSize(int minibatchSize)
 {
 	if (neurons == nullptr || (neurons != nullptr && neurons[0].getRows() != minibatchSize)) {
 		delete[] neurons;
+		delete[] neuronDerivatives;
 		
 		this->neurons = new Matrix[layerCount];
 		for (int l = 0; l < layerCount; l++) {
 			neurons[l] = Matrix(minibatchSize, l == layerCount - 1 ? getNeuronCount(l) : getNeuronCount(l) + 1);
 		}
+
+		this->neuronDerivatives = new Matrix[layerCount];
+		for (int l = 0; l < layerCount; l++) {
+			neuronDerivatives[l] = Matrix(minibatchSize, getNeuronCount(l));
+		}
 	}
 }
 
-Matrix* NeuralNetwork::compute(const Matrix& input) {
-	initializeNeurons(input.getRows());
+Matrix* NeuralNetwork::compute(const DataSet& data, bool calcDerivatives) {
+	initializeMinibatchSize(data.getInput().getRows());
 
-	copyMatrixAndAddBias(input, neurons[0]);
+	copyMatrixAndAddBias(data.getInput(), neurons[0]);
 
 	for (int l = 0; l < layerCount - 1; l++) {
 		Matrix* in = &(neurons[l]);
@@ -63,6 +69,9 @@ Matrix* NeuralNetwork::compute(const Matrix& input) {
 		for (int i = 0; i < m.getRows(); i++) {
 			for (int j = 0; j < m.getCols(); j++) {
 				m(i, j) = activationFunction->getOutput(m(i, j));
+
+				if (calcDerivatives)
+					neuronDerivatives[l](i, j) = activationFunction->getDerivative(m(i, j));
 			}
 		}
 

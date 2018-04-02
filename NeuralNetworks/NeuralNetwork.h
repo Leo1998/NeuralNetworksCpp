@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Matrix.h"
+#include "DataSet.h"
 #include "ActivationFunctions.h"
 
 class NeuralNetwork
@@ -11,6 +12,7 @@ private:
 
 	ActivationFunction* activationFunction;
 	Matrix* neurons;
+	Matrix* neuronDerivatives;
 	Matrix* weights;
 public:
 	NeuralNetwork(int shape[], int layerCount, ActivationFunction* activationFunction);
@@ -18,6 +20,9 @@ public:
 
 	inline int getLayerCount() { return layerCount; }
 	inline int getNeuronCount(int layer) { return shape[layer]; }
+
+	inline const Matrix& getNeurons(int l) { return neurons[l]; }
+	inline const Matrix& getNeuronDerivatives(int l) { return neuronDerivatives[l]; }
 
 	/**
 		Returns the Bias from the l-th Layer to the n-th Neuron in the next Layer.
@@ -41,8 +46,8 @@ public:
 
 	void randomizeWeights(double, double);
 
-	void initializeNeurons(int minibatchSize);
-	Matrix* compute(const Matrix& input);
+	void initializeMinibatchSize(int minibatchSize);
+	Matrix* compute(const DataSet& data, bool calcDerivatives = false);
 
 };
 
