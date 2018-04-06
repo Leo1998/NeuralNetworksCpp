@@ -10,10 +10,12 @@ private:
 	int* shape;
 	int layerCount;
 
-	ActivationFunction* activationFunction;
 	Matrix* neurons;
 	Matrix* neuronDerivatives;
+
+	ActivationFunction* activationFunction;
 	Matrix* weights;
+	Matrix* biases;
 public:
 	NeuralNetwork(int shape[], int layerCount, ActivationFunction* activationFunction);
 	~NeuralNetwork();
@@ -27,11 +29,11 @@ public:
 	/**
 		Returns the Bias from the l-th Layer to the n-th Neuron in the next Layer.
 	*/
-	inline double getBias(int l, int n) { return weights[l](getNeuronCount(l), n); }
+	inline double getBias(int l, int n) { return biases[l](n, 0); }
 	/**
 		Sets the Bias from the l-th Layer to the n-th Neuron in the next Layer to the given Value.
 	*/
-	inline void setBias(int l, int n, double bias) { weights[l](getNeuronCount(l), n) = bias; }
+	inline void setBias(int l, int n, double bias) { biases[l](n, 0) = bias; }
 
 	/**
 		Returns the Weight of the Connection from the n1-th Neuron in the l-th Layer to the	n2-th Neuron in the next Layer.
@@ -43,6 +45,10 @@ public:
 	inline void setWeight(int l, int n1, int n2, double value) { weights[l](n1, n2) = value; }
 
 	inline const Matrix& getWeightMatrix(int l) { return weights[l]; }
+	inline const Matrix& getBiasMatrix(int l) { return biases[l]; }
+
+	inline void adjustWeights(int l, const Matrix& delta) { weights[l] += delta; }
+	inline void adjustBiases(int l, const Matrix& delta) { biases[l] += delta; }
 
 	void randomizeWeights(double, double);
 

@@ -99,6 +99,9 @@ Matrix& Matrix::operator-=(const Matrix& m)
 
 Matrix& Matrix::operator*=(const Matrix& m)
 {
+	if (cols != m.rows)
+		throw 69;
+
 	Matrix temp(rows, m.cols);
 	for (int i = 0; i < temp.rows; ++i) {
 		for (int j = 0; j < temp.cols; ++j) {
@@ -137,6 +140,15 @@ void Matrix::swapRows(int r1, int r2)
 	p[r2] = temp;
 }
 
+void Matrix::fill(double value) 
+{
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			p[i][j] = value;
+		}
+	}
+}
+
 void Matrix::randomize(double min, double max)
 {
 	for (int i = 0; i < rows; ++i) {
@@ -146,7 +158,16 @@ void Matrix::randomize(double min, double max)
 	}
 }
 
-Matrix Matrix::transpose()
+void Matrix::multElementWise(const Matrix& m) 
+{
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			p[i][j] *= m.p[i][j];
+		}
+	}
+}
+
+Matrix Matrix::transpose() const
 {
 	Matrix ret(cols, rows);
 	for (int i = 0; i < rows; ++i) {
@@ -155,6 +176,17 @@ Matrix Matrix::transpose()
 		}
 	}
 	return ret;
+}
+
+double Matrix::sum() const
+{
+	double sum = 0.0;
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			sum += p[i][j];
+		}
+	}
+	return sum;
 }
 
 // functions on VECTORS

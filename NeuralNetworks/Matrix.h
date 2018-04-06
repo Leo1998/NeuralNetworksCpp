@@ -27,8 +27,11 @@ public:
 	friend std::istream& operator>>(std::istream&, Matrix&);
 
 	void swapRows(int, int);
+	void fill(double);
 	void randomize(double, double);
-	Matrix transpose();
+	void multElementWise(const Matrix&);
+	Matrix transpose() const;
+	double sum() const;
 
 	// functions on vectors
 	static double dotProduct(Matrix, Matrix);

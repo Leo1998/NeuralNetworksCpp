@@ -1,7 +1,5 @@
 #include "Optimizer.h"
 
-
-
 Optimizer::Optimizer(NeuralNetwork* nn) : nn(nn)
 {
 }
@@ -10,23 +8,28 @@ Optimizer::Optimizer(NeuralNetwork* nn) : nn(nn)
 Optimizer::~Optimizer()
 {
 	delete[] errors;
-	delete[] errorDeltas;
+	delete[] weightDeltas;
 }
 
 void Optimizer::initializeMinibatchSize(int minibatchSize)
 {
 	if (errors == nullptr || (errors != nullptr && errors[0].getRows() != minibatchSize)) {
 		delete[] errors;
-		delete[] errorDeltas;
+		delete[] weightDeltas;
 
 		this->errors = new Matrix[nn->getLayerCount()];
 		for (int l = 0; l < nn->getLayerCount(); l++) {
 			errors[l] = Matrix(minibatchSize, nn->getNeuronCount(l));
 		}
 
-		this->errorDeltas = new Matrix[nn->getLayerCount()];
-		for (int l = 0; l < nn->getLayerCount(); l++) {
-			errorDeltas[l] = Matrix(minibatchSize, nn->getNeuronCount(l));
+		this->weightDeltas = new Matrix[nn->getLayerCount() - 1];
+		for (int l = 0; l < nn->getLayerCount() - 1; l++) {
+			weightDeltas[l] = Matrix(nn->getNeuronCount(l), nn->getNeuronCount(l + 1));
+		}
+
+		this->biasDeltas = new Matrix[nn->getLayerCount() - 1];
+		for (int l = 0; l < nn->getLayerCount() - 1; l++) {
+			biasDeltas[l] = Matrix(nn->getNeuronCount(l + 1), 1);
 		}
 	}
 }
@@ -36,37 +39,35 @@ void Optimizer::optimize(DataSet data, double learningRate, double momentum)
 	if (data.hasDesiredOutput()) {
 		initializeMinibatchSize(data.getMinibatchSize());
 
+		
 		Matrix* output = nn->compute(data, true);
 
-		for (int l = nn->getLayerCount() - 1; l >= 0; l--) {
+		for (int l = nn->getLayerCount() - 1; l > 0; l--) {
 			int next = l + 1;
 
-			if (l == nn->getLayerCount()) {
-				errors[l] = data.getDesiredOutput() - *output;
-				errorDeltas[l] = errors[l] * nn->getNeuronDerivatives(l);
+			if (l == nn->getLayerCount() - 1) {
+				errors[l] = data.getDesiredOutput() - *output; // this decides if we need to add or subtract the delta weights
+				errors[l] = errors[l].transpose();
 			}
+			else {
+				errors[l] = nn->getWeightMatrix(l) * errors[l + 1];
 
-
-
-			/*for (int i = 0; i < nn->getNeuronCount(l); i++) {
-				if (l == nn->getLayerCount() - 1) {
-					errorMatrix[l].set(i, 0, desiredOutput[i] - output[i]);
-				}
-				else {
-					for (int j = 0; j < nn.countNeurons(next); j++) {
-						accumulateDelta(l, i, j, errorDeltaMatrix[next].get(j, 0) * nn.getNeuron(l, i));
-
-						errorMatrix[l].add(i, 0, nn.getWeight(l, i, j) * errorDeltaMatrix[next].get(j, 0));
-					}
-				}
-				errorDeltaMatrix[l].set(i, 0, errorMatrix[l].get(i, 0) * nn.getTransferFunction().getDerivative(nn.getNeuron(l, i)));
+				const Matrix& derivatives = nn->getNeuronDerivatives(l);
+				errors[l].multElementWise(derivatives.transpose());
 			}
+		}
 
-			if (l < nn.getLayerCount() - 1) {
-				for (int j = 0; j < nn.countNeurons(next); j++) {
-					accumulateBiasDelta(l, j, errorDeltaMatrix[next].get(j, 0));
-				}
-			}*/
+		for (int l = 0; l < nn->getLayerCount() - 1; l++) {
+			weightDeltas[l] = (errors[l + 1] * nn->getNeurons(l)).transpose();
+
+			Matrix one = Matrix(data.getMinibatchSize(), nn->getNeuronCount(l));
+			one.fill(1.0);
+			biasDeltas[l] = (errors[l + 1] * one).transpose();
+
+			Matrix dw = learningRate * weightDeltas[l];
+			Matrix db = learningRate * biasDeltas[l];
+			nn->adjustWeights(l, dw);
+			nn->adjustBiases(l, db);
 		}
 	}
 }

@@ -7,7 +7,8 @@ class Optimizer
 private:
 	NeuralNetwork* nn;
 	Matrix* errors;
-	Matrix* errorDeltas;
+	Matrix* weightDeltas;
+	Matrix* biasDeltas;
 public:
 	Optimizer(NeuralNetwork* nn);
 	~Optimizer();
