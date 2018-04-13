@@ -8,7 +8,6 @@
 #include "Timer.h"
 
 #include <iostream>
-#include <string>
 
 #define BATCH_SIZE 50
 #define TRAIN_SIZE 10000
@@ -42,7 +41,8 @@ int main() {
 	std::cout << "Training Data prepared!" << std::endl;
 	
 	int shape[] = { 784, 800, 10 };
-	NeuralNetwork nn(shape, sizeof(shape) / sizeof(*shape), new std::string[3]{ "", "Tanh", "Tanh" });
+	ActivationFunction activation[] = {Linear, Tanh, Tanh};
+	NeuralNetwork nn(shape, sizeof(shape) / sizeof(*shape), activation);
 	nn.randomizeWeights(-1.0, 1.0);
 
 	Optimizer optimizer(&nn);
@@ -55,8 +55,6 @@ int main() {
 
 			std::cout << "Epoch: " << e << " Batch: " << b / BATCH_SIZE << " Loss: " << optimizer.calcLoss(dataset) << std::endl;
 		}
-
-		
 	}
 
 	std::cout << "Testing..." << std::endl;

@@ -4,8 +4,6 @@
 #include "DataSet.h"
 #include "Functions.h"
 
-#include <string>
-
 namespace nn {
 
 	class NeuralNetwork
@@ -17,11 +15,11 @@ namespace nn {
 		Matrix* neurons;
 		Matrix* neuronDerivatives;
 
-		std::string* activationFunctions;
+		ActivationFunction* activationFunctions;
 		Matrix* weights;
 		Matrix* biases;
 	public:
-		NeuralNetwork(int shape[], int layerCount, std::string activationFunctions[]);
+		NeuralNetwork(int shape[], int layerCount, ActivationFunction activationFunctions[]);
 		~NeuralNetwork();
 
 		inline int getLayerCount() { return layerCount; }

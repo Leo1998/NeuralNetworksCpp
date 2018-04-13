@@ -2,10 +2,13 @@
 
 namespace nn {
 
-	NeuralNetwork::NeuralNetwork(int shape[], int layerCount, std::string activationFunctions[]) : layerCount(layerCount), activationFunctions(activationFunctions)
+	NeuralNetwork::NeuralNetwork(int shape[], int layerCount, ActivationFunction activationFunctions[]) : layerCount(layerCount)
 	{
 		this->shape = new int[layerCount];
 		memcpy(this->shape, shape, layerCount * sizeof(int));
+
+		this->activationFunctions = new ActivationFunction[layerCount];
+		memcpy(this->activationFunctions, activationFunctions, layerCount * sizeof(ActivationFunction));
 
 		this->weights = new Matrix[layerCount - 1];
 		for (int l = 0; l < layerCount - 1; l++) {
@@ -21,8 +24,15 @@ namespace nn {
 	NeuralNetwork::~NeuralNetwork()
 	{
 		delete[] shape;
-		delete[] weights;
 		delete[] activationFunctions;
+		delete[] weights;
+
+		if (neurons != nullptr) {
+			delete[] neurons;
+		}
+		if (neuronDerivatives != nullptr) {
+			delete[] neuronDerivatives;
+		}
 	}
 
 	void NeuralNetwork::randomizeWeights(double min, double max) {
@@ -63,13 +73,20 @@ namespace nn {
 				for (int j = 0; j < neurons[l + 1].getCols(); j++) {
 					// add bias
 					neurons[l + 1](i, j) += biases[l](j, 0);
-
-					if (calcDerivatives)
-						neuronDerivatives[l + 1](i, j) = calcDerivative(activationFunctions[l + 1], neurons[l + 1](i, j));
-
-					neurons[l + 1](i, j) = calcActivation(activationFunctions[l + 1], neurons[l + 1](i, j));
 				}
 			}
+
+			func activation = getFunction(activationFunctions[l + 1]);
+			func derivative = getDerivative(activationFunctions[l + 1]);
+
+			if (calcDerivatives) {
+				neuronDerivatives[l + 1] = neurons[l + 1];
+				derivative(neuronDerivatives[l + 1]);
+				//neuronDerivatives[l + 1](i, j) = calcDerivative(activationFunctions[l + 1], neurons[l + 1](i, j));
+			}
+
+			activation(neurons[l + 1]);
+			//neurons[l + 1](i, j) = calcActivation(activationFunctions[l + 1], neurons[l + 1](i, j));
 		}
 
 		return &(neurons[getLayerCount() - 1]);
