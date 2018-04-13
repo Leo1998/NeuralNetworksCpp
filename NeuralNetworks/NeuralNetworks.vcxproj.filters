@@ -36,6 +36,9 @@
     <ClCompile Include="Optimizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MnistTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Log.h">
@@ -50,9 +53,6 @@
     <ClInclude Include="MathUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ActivationFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -60,6 +60,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Optimizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mnist_reader_less.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mnist_reader_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mnist_reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

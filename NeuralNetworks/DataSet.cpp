@@ -1,12 +1,20 @@
 #include "DataSet.h"
 
-DataSet::DataSet(Matrix& input)
-{
-	this->input = &input;
-}
+namespace nn {
 
-DataSet::DataSet(Matrix& input, Matrix& desiredOutput)
-{
-	this->input = &input;
-	this->desiredOutput = &desiredOutput;
+	DataSet::DataSet()
+	{
+
+	}
+
+	DataSet::DataSet(const Matrix& input)
+	{
+		this->input = input;
+	}
+
+	DataSet::DataSet(const Matrix& input, const Matrix& desiredOutput)
+	{
+		this->input = input;
+		this->desiredOutput = desiredOutput;
+	}
 }

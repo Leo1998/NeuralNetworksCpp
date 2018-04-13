@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DataSet.cpp" />
+    <ClCompile Include="MnistTest.cpp" />
     <ClCompile Include="Optimizer.cpp" />
     <ClCompile Include="XORTest.cpp" />
     <ClCompile Include="Matrix.cpp" />
@@ -137,11 +138,14 @@
     <ClCompile Include="WinLog.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ActivationFunctions.h" />
+    <ClInclude Include="Functions.h" />
     <ClInclude Include="DataSet.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="MathUtil.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="mnist_reader.h" />
+    <ClInclude Include="mnist_reader_common.h" />
+    <ClInclude Include="mnist_reader_less.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="Optimizer.h" />
     <ClInclude Include="Timer.h" />

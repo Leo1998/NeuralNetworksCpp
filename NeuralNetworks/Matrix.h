@@ -2,50 +2,54 @@
 
 #include <iostream>
 
-class Matrix {
-public:
-	Matrix(int, int);
-	Matrix();
-	~Matrix();
-	Matrix(int, int, double);
-	Matrix(const Matrix&);
+namespace nn {
 
-	Matrix& operator=(const Matrix&);
+	class Matrix {
+	public:
+		Matrix(int, int);
+		Matrix();
+		~Matrix();
+		Matrix(int, int, double);
+		Matrix(const Matrix&);
 
-	inline double& operator()(int x, int y) const { return p[x][y]; }
+		Matrix& operator=(const Matrix&);
 
-	inline int getRows() const { return rows; }
-	inline int getCols() const { return cols; }
+		inline double& operator()(int x, int y) const { return p[x][y]; }
 
-	Matrix& operator+=(const Matrix&);
-	Matrix& operator-=(const Matrix&);
-	Matrix& operator*=(const Matrix&);
-	Matrix& operator*=(double);
-	Matrix& operator/=(double);
+		inline int getRows() const { return rows; }
+		inline int getCols() const { return cols; }
 
-	friend std::ostream& operator<<(std::ostream&, const Matrix&);
-	friend std::istream& operator>>(std::istream&, Matrix&);
+		Matrix& operator+=(const Matrix&);
+		Matrix& operator-=(const Matrix&);
+		Matrix& operator*=(const Matrix&);
+		Matrix& operator*=(double);
+		Matrix& operator/=(double);
 
-	void swapRows(int, int);
-	void fill(double);
-	void randomize(double, double);
-	void multElementWise(const Matrix&);
-	Matrix transpose() const;
-	double sum() const;
+		friend std::ostream& operator<<(std::ostream&, const Matrix&);
+		friend std::istream& operator>>(std::istream&, Matrix&);
 
-	// functions on vectors
-	static double dotProduct(Matrix, Matrix);
+		void swapRows(int, int);
+		void fill(double);
+		void randomize(double, double);
+		void multElementWise(const Matrix&);
+		Matrix transpose() const;
+		double sum() const;
 
-private:
-	int rows, cols;
-	double **p;
+		// functions on vectors
+		static double dotProduct(Matrix, Matrix);
 
-	void allocSpace();
-};
+	private:
+		int rows, cols;
+		double **p;
 
-Matrix operator+(const Matrix&, const Matrix&);
-Matrix operator-(const Matrix&, const Matrix&);
-Matrix operator*(const Matrix&, const Matrix&);
-Matrix operator*(const Matrix&, double);
-Matrix operator*(double, const Matrix&);
-Matrix operator/(const Matrix&, double);
+		void allocSpace();
+	};
+
+	Matrix operator+(const Matrix&, const Matrix&);
+	Matrix operator-(const Matrix&, const Matrix&);
+	Matrix operator*(const Matrix&, const Matrix&);
+	Matrix operator*(const Matrix&, double);
+	Matrix operator*(double, const Matrix&);
+	Matrix operator/(const Matrix&, double);
+
+}

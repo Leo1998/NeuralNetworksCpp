@@ -2,58 +2,62 @@
 
 #include "Matrix.h"
 #include "DataSet.h"
-#include "ActivationFunctions.h"
+#include "Functions.h"
 
-class NeuralNetwork
-{
-private:
-	int* shape;
-	int layerCount;
+#include <string>
 
-	Matrix* neurons;
-	Matrix* neuronDerivatives;
+namespace nn {
 
-	ActivationFunction* activationFunction;
-	Matrix* weights;
-	Matrix* biases;
-public:
-	NeuralNetwork(int shape[], int layerCount, ActivationFunction* activationFunction);
-	~NeuralNetwork();
+	class NeuralNetwork
+	{
+	private:
+		int* shape;
+		int layerCount;
 
-	inline int getLayerCount() { return layerCount; }
-	inline int getNeuronCount(int layer) { return shape[layer]; }
+		Matrix* neurons;
+		Matrix* neuronDerivatives;
 
-	inline const Matrix& getNeurons(int l) { return neurons[l]; }
-	inline const Matrix& getNeuronDerivatives(int l) { return neuronDerivatives[l]; }
+		std::string* activationFunctions;
+		Matrix* weights;
+		Matrix* biases;
+	public:
+		NeuralNetwork(int shape[], int layerCount, std::string activationFunctions[]);
+		~NeuralNetwork();
 
-	/**
-		Returns the Bias from the l-th Layer to the n-th Neuron in the next Layer.
-	*/
-	inline double getBias(int l, int n) { return biases[l](n, 0); }
-	/**
-		Sets the Bias from the l-th Layer to the n-th Neuron in the next Layer to the given Value.
-	*/
-	inline void setBias(int l, int n, double bias) { biases[l](n, 0) = bias; }
+		inline int getLayerCount() { return layerCount; }
+		inline int getNeuronCount(int layer) { return shape[layer]; }
 
-	/**
-		Returns the Weight of the Connection from the n1-th Neuron in the l-th Layer to the	n2-th Neuron in the next Layer.
-	*/
-	inline double getWeight(int l, int n1, int n2) { return weights[l](n1, n2); }
-	/**
-		Sets the Weight of the Connection from the n1-th Neuron in the l-th Layer to the n2-th Neuron in the next Layer to the given Value.
-	*/
-	inline void setWeight(int l, int n1, int n2, double value) { weights[l](n1, n2) = value; }
+		inline const Matrix& getNeurons(int l) { return neurons[l]; }
+		inline const Matrix& getNeuronDerivatives(int l) { return neuronDerivatives[l]; }
 
-	inline const Matrix& getWeightMatrix(int l) { return weights[l]; }
-	inline const Matrix& getBiasMatrix(int l) { return biases[l]; }
+		/**
+			Returns the Bias from the l-th Layer to the n-th Neuron in the next Layer.
+		*/
+		inline double getBias(int l, int n) { return biases[l](n, 0); }
+		/**
+			Sets the Bias from the l-th Layer to the n-th Neuron in the next Layer to the given Value.
+		*/
+		inline void setBias(int l, int n, double bias) { biases[l](n, 0) = bias; }
 
-	inline void adjustWeights(int l, const Matrix& delta) { weights[l] += delta; }
-	inline void adjustBiases(int l, const Matrix& delta) { biases[l] += delta; }
+		/**
+			Returns the Weight of the Connection from the n1-th Neuron in the l-th Layer to the	n2-th Neuron in the next Layer.
+		*/
+		inline double getWeight(int l, int n1, int n2) { return weights[l](n1, n2); }
+		/**
+			Sets the Weight of the Connection from the n1-th Neuron in the l-th Layer to the n2-th Neuron in the next Layer to the given Value.
+		*/
+		inline void setWeight(int l, int n1, int n2, double value) { weights[l](n1, n2) = value; }
 
-	void randomizeWeights(double, double);
+		inline const Matrix& getWeightMatrix(int l) { return weights[l]; }
+		inline const Matrix& getBiasMatrix(int l) { return biases[l]; }
 
-	void initializeMinibatchSize(int minibatchSize);
-	Matrix* compute(const DataSet& data, bool calcDerivatives = false);
+		inline void adjustWeights(int l, const Matrix& delta) { weights[l] += delta; }
+		inline void adjustBiases(int l, const Matrix& delta) { biases[l] += delta; }
 
-};
+		void randomizeWeights(double, double);
 
+		void initializeMinibatchSize(int minibatchSize);
+		Matrix* compute(const DataSet& data, bool calcDerivatives = false);
+
+	};
+}

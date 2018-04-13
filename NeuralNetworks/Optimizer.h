@@ -2,18 +2,23 @@
 
 #include "NeuralNetwork.h"
 
-class Optimizer
-{
-private:
-	NeuralNetwork* nn;
-	Matrix* errors;
-	Matrix* weightDeltas;
-	Matrix* biasDeltas;
-public:
-	Optimizer(NeuralNetwork* nn);
-	~Optimizer();
+namespace nn {
 
-	void initializeMinibatchSize(int minibatchSize);
-	void optimize(DataSet data, double learningRate, double momentum);
-};
+	class Optimizer
+	{
+	private:
+		NeuralNetwork * nn;
+		Matrix* errors;
+		Matrix* weightDeltas;
+		Matrix* biasDeltas;
+		Matrix* lastWeightDeltas;
+		Matrix* lastBiasDeltas;
+	public:
+		Optimizer(NeuralNetwork* nn);
+		~Optimizer();
 
+		void initializeMinibatchSize(int minibatchSize);
+		void optimize(DataSet data, double learningRate, double momentum);
+		double calcLoss(DataSet data);
+	};
+}

@@ -1,15 +1,18 @@
 #include "NeuralNetwork.h"
-#include "ActivationFunctions.h"
+#include "Functions.h"
 #include "Optimizer.h"
 
 #include "Timer.h"
 #include <iostream>
+#include <string>
 
-int main() {
+using namespace nn;
+
+int main0() {
 	int shape[] = { 2, 2, 1 };
 
-	NeuralNetwork nn(shape, sizeof(shape) / sizeof(*shape), new Sigmoid);
-	nn.randomizeWeights(0.3, 0.7);
+	NeuralNetwork nn(shape, sizeof(shape) / sizeof(*shape), new std::string[3]{ "", "Tanh", "Tanh" });
+	nn.randomizeWeights(-0.5, 0.5);
 
 	Matrix input(4, 2);
 	input(0, 0) = 0.0;
@@ -30,8 +33,8 @@ int main() {
 
 	Optimizer optimizer(&nn);
 
-	for (int i = 0; i < 20000; i++) {
-		optimizer.optimize(dataSet, 0.1, 0.8);
+	for (int i = 0; i < 5000; i++) {
+		optimizer.optimize(dataSet, 0.049, 0.1);
 	}
 
 	Timer timer;

@@ -2,16 +2,19 @@
 
 #include <chrono>
 
-class Timer {
-public:
-	Timer();
-	void reset();
-	float elapsedMillis() const;
-	inline float elapsedSeconds() const { return elapsedMillis() / 1000.0f; }
+namespace nn {
 
-private:
-	typedef std::chrono::high_resolution_clock clock;
-	typedef std::chrono::duration<float, std::milli> milliseconds_type;
+	class Timer {
+	public:
+		Timer();
+		void reset();
+		float elapsedMillis() const;
+		inline float elapsedSeconds() const { return elapsedMillis() / 1000.0f; }
 
-	std::chrono::time_point<clock> beg;
-};
+	private:
+		typedef std::chrono::high_resolution_clock clock;
+		typedef std::chrono::duration<float, std::milli> milliseconds_type;
+
+		std::chrono::time_point<clock> beg;
+	};
+}
