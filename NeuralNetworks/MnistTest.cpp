@@ -10,7 +10,9 @@
 #include <iostream>
 
 #define BATCH_SIZE 50
-#define TRAIN_SIZE 10000
+#define TRAIN_SIZE 20000
+#define LEARNING_RATE 0.01
+#define MOMENTUM 0.9
 
 using namespace nn;
 
@@ -31,7 +33,7 @@ int main() {
 			int label = (int)dataset.training_labels[b + i];
 
 			for (int p = 0; p < image.size(); p++) {
-				in(i, p) = (int)image[p] / 255.0;
+				in(i, p) = ((int)image[p]) > 0 ? 1.0 : 0.0;
 			}
 			out(i, label) = 1.0;
 		}
@@ -41,9 +43,10 @@ int main() {
 	std::cout << "Training Data prepared!" << std::endl;
 	
 	int shape[] = { 784, 800, 10 };
-	ActivationFunction activation[] = {Linear, Tanh, Tanh};
+	ActivationFunction activation[] = {Linear, Sigmoid, Sigmoid};
 	NeuralNetwork nn(shape, sizeof(shape) / sizeof(*shape), activation);
-	nn.randomizeWeights(-1.0, 1.0);
+	//nn.initializeRandom(-0.3, 0.3);
+	nn.initializeXavier();
 
 	Optimizer optimizer(&nn);
 	
@@ -51,7 +54,9 @@ int main() {
 		for (int b = 0; b < TRAIN_SIZE; b += BATCH_SIZE) {
 			DataSet dataset = batches[b / BATCH_SIZE];
 
-			optimizer.optimize(dataset, 0.01, 0.9);
+			optimizer.optimize(dataset, LEARNING_RATE, MOMENTUM);
+
+			//std::cout << *nn.compute(dataset) << std::endl;
 
 			std::cout << "Epoch: " << e << " Batch: " << b / BATCH_SIZE << " Loss: " << optimizer.calcLoss(dataset) << std::endl;
 		}

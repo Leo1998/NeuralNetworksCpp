@@ -11,7 +11,7 @@ int main0() {
 	ActivationFunction activation[] = {Linear, Tanh, Tanh};
 
 	NeuralNetwork nn(shape, sizeof(shape) / sizeof(*shape), activation);
-	nn.randomizeWeights(-0.5, 0.5);
+	nn.initializeRandom(-0.5, 0.5);
 
 	Matrix input(4, 2);
 	input(0, 0) = 0.0;
@@ -34,6 +34,7 @@ int main0() {
 
 	for (int i = 0; i < 5000; i++) {
 		optimizer.optimize(dataSet, 0.049, 0.1);
+		std::cout << optimizer.calcLoss(dataSet) << std::endl;
 	}
 
 	Timer timer;

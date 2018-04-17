@@ -28,9 +28,9 @@ namespace nn {
 		applySigmoid(in);
 		for (int i = 0; i < in.getRows(); i++) {
 			for (int j = 0; j < in.getCols(); j++) {
-				double d = in(i, j);
+				double x = in(i, j);
 
-				in(i, j) = d * (1 - d);
+				in(i, j) = x * (1 - x);
 			}
 		}
 	}
@@ -47,18 +47,60 @@ namespace nn {
 		applyTanh(in);
 		for (int i = 0; i < in.getRows(); i++) {
 			for (int j = 0; j < in.getCols(); j++) {
-				double d = in(i, j);
+				double x = in(i, j);
 				
-				in(i, j) = 1.0 - d * d;
+				in(i, j) = 1.0 - x * x;
 			}
 		}
+	}
+
+	static void applyRelu(Matrix& in) {
+		for (int i = 0; i < in.getRows(); i++) {
+			for (int j = 0; j < in.getCols(); j++) {
+				in(i, j) = in(i, j) >= 0.0 ? in(i, j) : 0.0;
+			}
+		}
+	}
+
+	static void applyReluDerivative(Matrix& in) {
+		for (int i = 0; i < in.getRows(); i++) {
+			for (int j = 0; j < in.getCols(); j++) {
+				in(i, j) = in(i, j) >= 0.0 ? 1.0 : 0.0;
+			}
+		}
+	}
+
+	static void applySoftmax(Matrix& in) {
+		for (int i = 0; i < in.getRows(); i++) {
+			double sumExp = 0.0;
+			for (int j = 0; j < in.getCols(); j++) {
+				sumExp += exp(in(i, j));
+			}
+
+			for (int j = 0; j < in.getCols(); j++) {
+				in(i, j) = exp(in(i, j)) / sumExp;
+			}
+		}
+	}
+
+	static void applySoftmaxDerivative(Matrix& in) {
+		for (int i = 0; i < in.getRows(); i++) {
+			for (int j = 0; j < in.getCols(); j++) {
+				in(i, j) = 0.0; //TODO
+			}
+		}
+	}
+
+	static int kroneckerDelta(int i, int j) {
+		return i == j ? 1 : 0;
 	}
 
 	enum ActivationFunction {
 		Linear,
 		Sigmoid,
 		Tanh,
-		Relu
+		Relu,
+		Softmax
 	};
 
 	typedef void(*func)(Matrix& in);
@@ -70,6 +112,12 @@ namespace nn {
 		else if (func == Tanh) {
 			return applyTanh;
 		}
+		else if (func == Relu) {
+			return applyRelu;
+		}
+		else if (func == Softmax) {
+			return applySoftmax;
+		}
 
 		return applyLinear;
 	}
@@ -80,6 +128,12 @@ namespace nn {
 		}
 		else if (func == Tanh) {
 			return applyTanhDerivative;
+		}
+		else if (func == Relu) {
+			return applyReluDerivative;
+		}
+		else if (func == Softmax) {
+			return applySoftmaxDerivative;
 		}
 
 		return applyLinearDerivative;

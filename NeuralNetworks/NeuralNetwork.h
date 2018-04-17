@@ -52,7 +52,11 @@ namespace nn {
 		inline void adjustWeights(int l, const Matrix& delta) { weights[l] += delta; }
 		inline void adjustBiases(int l, const Matrix& delta) { biases[l] += delta; }
 
-		void randomizeWeights(double, double);
+		void initializeRandom(double min, double max);
+		/**
+			uniform: Whether to use uniform or normal distributed random initialization.
+		*/
+		void initializeXavier();
 
 		void initializeMinibatchSize(int minibatchSize);
 		Matrix* compute(const DataSet& data, bool calcDerivatives = false);

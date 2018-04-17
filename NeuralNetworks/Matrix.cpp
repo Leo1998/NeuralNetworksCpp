@@ -79,7 +79,7 @@ namespace nn {
 		return *this;
 	}
 
-	Matrix& Matrix::operator+=(const Matrix& m)
+	inline Matrix& Matrix::operator+=(const Matrix& m)
 	{
 		for (int i = 0; i < rows; ++i) {
 			for (int j = 0; j < cols; ++j) {
@@ -89,7 +89,7 @@ namespace nn {
 		return *this;
 	}
 
-	Matrix& Matrix::operator-=(const Matrix& m)
+	inline Matrix& Matrix::operator-=(const Matrix& m)
 	{
 		for (int i = 0; i < rows; ++i) {
 			for (int j = 0; j < cols; ++j) {
@@ -99,11 +99,8 @@ namespace nn {
 		return *this;
 	}
 
-	Matrix& Matrix::operator*=(const Matrix& m)
+	inline Matrix& Matrix::operator*=(const Matrix& m)
 	{
-		if (cols != m.rows)
-			throw 69;
-
 		Matrix temp(rows, m.cols);
 		for (int i = 0; i < temp.rows; ++i) {
 			for (int j = 0; j < temp.cols; ++j) {
@@ -115,7 +112,7 @@ namespace nn {
 		return (*this = temp);
 	}
 
-	Matrix& Matrix::operator*=(double num)
+	inline Matrix& Matrix::operator*=(double num)
 	{
 		for (int i = 0; i < rows; ++i) {
 			for (int j = 0; j < cols; ++j) {
@@ -125,7 +122,7 @@ namespace nn {
 		return *this;
 	}
 
-	Matrix& Matrix::operator/=(double num)
+	inline Matrix& Matrix::operator/=(double num)
 	{
 		for (int i = 0; i < rows; ++i) {
 			for (int j = 0; j < cols; ++j) {

@@ -35,10 +35,18 @@ namespace nn {
 		}
 	}
 
-	void NeuralNetwork::randomizeWeights(double min, double max) {
+	void NeuralNetwork::initializeRandom(double min, double max) {
 		for (int l = 0; l < getLayerCount() - 1; l++) {
 			weights[l].randomize(min, max);
-			biases[l].randomize(min, max);
+			//biases[l].randomize(min, max);
+		}
+	}
+
+	void NeuralNetwork::initializeXavier() {
+		for (int l = 0; l < getLayerCount() - 1; l++) {
+			double x = sqrt(6.0 / (weights[l].getRows() + weights[l].getCols()));
+
+			weights[l].randomize(-x, x);
 		}
 	}
 
@@ -82,11 +90,9 @@ namespace nn {
 			if (calcDerivatives) {
 				neuronDerivatives[l + 1] = neurons[l + 1];
 				derivative(neuronDerivatives[l + 1]);
-				//neuronDerivatives[l + 1](i, j) = calcDerivative(activationFunctions[l + 1], neurons[l + 1](i, j));
 			}
 
 			activation(neurons[l + 1]);
-			//neurons[l + 1](i, j) = calcActivation(activationFunctions[l + 1], neurons[l + 1](i, j));
 		}
 
 		return &(neurons[getLayerCount() - 1]);
