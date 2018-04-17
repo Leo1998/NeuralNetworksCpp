@@ -9,9 +9,9 @@
 
 #include <iostream>
 
-#define BATCH_SIZE 50
+#define BATCH_SIZE 100
 #define TRAIN_SIZE 20000
-#define LEARNING_RATE 0.01
+#define LEARNING_RATE 0.009
 #define MOMENTUM 0.9
 
 using namespace nn;
@@ -33,7 +33,8 @@ int main() {
 			int label = (int)dataset.training_labels[b + i];
 
 			for (int p = 0; p < image.size(); p++) {
-				in(i, p) = ((int)image[p]) > 0 ? 1.0 : 0.0;
+				in(i, p) = ((int)image[p]) / 255.0;
+				//in(i, p) = ((int)image[p]) > 0 ? 1.0 : 0.0;
 			}
 			out(i, label) = 1.0;
 		}
@@ -42,7 +43,7 @@ int main() {
 
 	std::cout << "Training Data prepared!" << std::endl;
 	
-	int shape[] = { 784, 800, 10 };
+	int shape[] = { 784, 1000, 10 };
 	ActivationFunction activation[] = {Linear, Sigmoid, Sigmoid};
 	NeuralNetwork nn(shape, sizeof(shape) / sizeof(*shape), activation);
 	//nn.initializeRandom(-0.3, 0.3);
@@ -69,11 +70,9 @@ int main() {
 		Matrix* output = nn.compute(dataset);
 
 		for (int i = 0; i < output->getRows(); i++) {
-			int max = (*output)(i, 0);
 			int maxIdx = 0;
 			for (int j = 1; j < output->getCols(); j++) {
-				if ((*output)(i, j) > max) {
-					max = (*output)(i, j);
+				if ((*output)(i, j) > (*output)(i, maxIdx)) {
 					maxIdx = j;
 				}
 			}
