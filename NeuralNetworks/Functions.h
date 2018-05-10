@@ -9,11 +9,7 @@ namespace nn {
 	}
 
 	static void applyLinearDerivative(Matrix& in) {
-		for (int i = 0; i < in.getRows(); i++) {
-			for (int j = 0; j < in.getCols(); j++) {
-				in(i, j) = 1.0;
-			}
-		}
+		in.fill(1.0);
 	}
 	
 	static void applySigmoid(Matrix& in) {

@@ -9,9 +9,9 @@
 
 #include <iostream>
 
-#define BATCH_SIZE 100
-#define TRAIN_SIZE 20000
-#define LEARNING_RATE 0.009
+#define BATCH_SIZE 250
+#define TRAIN_SIZE 30000
+#define LEARNING_RATE 0.0125
 #define MOMENTUM 0.9
 
 using namespace nn;
@@ -43,15 +43,15 @@ int main() {
 
 	std::cout << "Training Data prepared!" << std::endl;
 	
-	int shape[] = { 784, 1000, 10 };
-	ActivationFunction activation[] = {Linear, Sigmoid, Sigmoid};
+	int shape[] = { 784, 800, 10 };
+	ActivationFunction activation[] = { Linear, Sigmoid, Sigmoid };
 	NeuralNetwork nn(shape, sizeof(shape) / sizeof(*shape), activation);
-	//nn.initializeRandom(-0.3, 0.3);
+	//nn.initializeRandom(0.0, 1.0);
 	nn.initializeXavier();
 
 	Optimizer optimizer(&nn);
 	
-	for (int e = 0; e < 10; e++) {
+	for (int e = 0; e < 8; e++) {
 		for (int b = 0; b < TRAIN_SIZE; b += BATCH_SIZE) {
 			DataSet dataset = batches[b / BATCH_SIZE];
 

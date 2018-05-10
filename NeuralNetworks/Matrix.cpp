@@ -3,6 +3,8 @@
 #include <iostream>
 #include "MathUtil.h"
 
+#define USE_OMP 1
+
 namespace nn {
 
 	Matrix::Matrix(int rows, int cols) : rows(rows), cols(cols)
@@ -81,8 +83,14 @@ namespace nn {
 
 	inline Matrix& Matrix::operator+=(const Matrix& m)
 	{
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < cols; ++j) {
+		int i, j;
+
+		#if USE_OMP
+		#pragma omp parallel for private(i, j) schedule(dynamic)
+		#endif
+
+		for (i = 0; i < rows; ++i) {
+			for (j = 0; j < cols; ++j) {
 				p[i][j] += m.p[i][j];
 			}
 		}
@@ -91,8 +99,14 @@ namespace nn {
 
 	inline Matrix& Matrix::operator-=(const Matrix& m)
 	{
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < cols; ++j) {
+		int i, j;
+
+		#if USE_OMP
+		#pragma omp parallel for private(i, j) schedule(dynamic)
+		#endif
+
+		for (i = 0; i < rows; ++i) {
+			for (j = 0; j < cols; ++j) {
 				p[i][j] -= m.p[i][j];
 			}
 		}
@@ -102,9 +116,15 @@ namespace nn {
 	inline Matrix& Matrix::operator*=(const Matrix& m)
 	{
 		Matrix temp(rows, m.cols);
-		for (int i = 0; i < temp.rows; ++i) {
-			for (int j = 0; j < temp.cols; ++j) {
-				for (int k = 0; k < cols; ++k) {
+
+		int i, j, k;
+
+		#if USE_OMP
+		#pragma omp parallel for private(i, j, k) schedule(dynamic)
+		#endif
+		for (i = 0; i < temp.rows; ++i) {
+			for (j = 0; j < temp.cols; ++j) {
+				for (k = 0; k < cols; ++k) {
 					temp.p[i][j] += (p[i][k] * m.p[k][j]);
 				}
 			}
@@ -114,8 +134,14 @@ namespace nn {
 
 	inline Matrix& Matrix::operator*=(double num)
 	{
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < cols; ++j) {
+		int i, j;
+
+		#if USE_OMP
+		#pragma omp parallel for private(i, j) schedule(dynamic)
+		#endif
+
+		for (i = 0; i < rows; ++i) {
+			for (j = 0; j < cols; ++j) {
 				p[i][j] *= num;
 			}
 		}
@@ -124,8 +150,14 @@ namespace nn {
 
 	inline Matrix& Matrix::operator/=(double num)
 	{
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < cols; ++j) {
+		int i, j;
+
+		#if USE_OMP
+		#pragma omp parallel for private(i, j) schedule(dynamic)
+		#endif
+
+		for (i = 0; i < rows; ++i) {
+			for (j = 0; j < cols; ++j) {
 				p[i][j] /= num;
 			}
 		}
@@ -159,8 +191,14 @@ namespace nn {
 
 	void Matrix::multElementWise(const Matrix& m)
 	{
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < cols; ++j) {
+		int i, j;
+
+		#if USE_OMP
+		#pragma omp parallel for private(i, j) schedule(dynamic)
+		#endif
+
+		for (i = 0; i < rows; ++i) {
+			for (j = 0; j < cols; ++j) {
 				p[i][j] *= m.p[i][j];
 			}
 		}
@@ -169,8 +207,14 @@ namespace nn {
 	Matrix Matrix::transpose() const
 	{
 		Matrix ret(cols, rows);
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < cols; ++j) {
+		int i, j;
+
+		#if USE_OMP
+		#pragma omp parallel for private(i, j) schedule(dynamic)
+		#endif
+
+		for (i = 0; i < rows; ++i) {
+			for (j = 0; j < cols; ++j) {
 				ret.p[j][i] = p[i][j];
 			}
 		}
